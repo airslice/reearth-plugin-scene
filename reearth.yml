@@ -13,7 +13,7 @@ extensions:
               type: string
               title: Background Colour
             - id: skybox
-              type: boolean
+              type: bool
               title: Skybox
   - id: atmos
     type: widget
@@ -23,8 +23,8 @@ extensions:
         - id: default
           fields:
             - id: sun
-              type: boolean
+              type: bool
               title: Toggle sun
             - id: lighting
-              type: boolean
+              type: bool
               title: Toggle lighting
