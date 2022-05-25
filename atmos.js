@@ -1,25 +1,62 @@
-const getText = () => reearth.widget.property && reearth.widget.property.default ? reearth.widget.property.default.text || "" : "";
 const html = `
-<h1 id="text"></h1>
 <style>
-  html, body {
-    margin: 0;
-    background: transparent;
+  body { margin: 0; }
+  .extendedh { width: 100%; }
+  .extendedv { height: 100%; }
+  #wrapper {
+    padding: 4px;
+    border: 1px solid rgb(111, 111, 111);
+    border-radius: 5px;
+    background-color: rgba(111, 111, 111, 0.5);
+    box-sizing: border-box;
+    height: 200px;
   }
+  .extendedh body, .extendedh #wrapper { width: 100%; }
+  .extendedv body, .extendedv #wrapper { height: 100%; }
+  ::-webkit-scrollbar { width: 8px; background: gray; }
+  ::-webkit-scrollbar-thumb { border-radius: 4px; background: red; }
 </style>
+<div id="wrapper">
+  <p style="color:white;">Scene API</p>
+  <p>
+    <input id="bg-color" placeholder="Background colour" />
+    <button id="skybox">Skybox</button>
+    <button id="remove">Remove</button>
+  </p>
+</div>
 <script>
-  const cb = text => {
-    document.getElementById("text").textContent = text;
-  };
-  addEventListener("message", e => {
-    if (e.source !== parent) return;
-    cb(e.data);
-  });
-  cb(${JSON.stringify(getText())});
+    let skyboxEnabled, bgcolor;
+
+    document.getElementById("remove").addEventListener("click", (e) => {
+        parent.postMessage(undefined, "*")
+    });
+
+    document.getElementById("bg-color").addEventListener("change", (e) => {
+        bgcolor = e.currentTarget.value;
+        parent.postMessage({default: {"bgcolor": bgcolor}}, "*")
+    });
+    
+    document.getElementById("skybox").addEventListener("click", (e) => {
+        if (!skyboxEnabled) {
+            skyboxEnabled = true;
+        } else{
+            skyboxEnabled = false;
+        }
+
+        parent.postMessage({default:{"skybox": skyboxEnabled}}, "*")
+        
+        if(skyboxEnabled === true) {
+            e.currentTarget.textContent = "Skybox Enabled"
+            }else{
+                e.currentTarget.textContent = "Skybox Disabled"
+            }
+    });
+
 </script>
 `;
 
-reearth.ui.show(html);
-reearth.on("update", () => {
-  reearth.ui.postMessage(getText());
+reearth.ui.show(html, { width: 300 });
+
+reearth.on("message", msg => {
+    reearth.visualizer.overrideProperty(msg)
 });
