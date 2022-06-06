@@ -1,8 +1,7 @@
-const html = `
 <style>
   html {
     width: 456px;
-    height: 250px;
+    height: 345px;
   }
   body {
     margin: 0;
@@ -17,7 +16,6 @@ const html = `
     padding: 10px 20px;
     background-color: rgba(35, 34, 38, 1);
     box-sizing: border-box;
-    height: 250px;
   }
   #wrapper h1 {
     font-weight: bold;
@@ -71,10 +69,6 @@ const html = `
     <button id="skybox">Skybox</button>
     <button id="remove">Remove</button>
   </p>
-  <h1>Layer API</h1>
-  <p>
-    <button id="add-layer">Add Layer</button>
-  </p>
 </div>
 <script>
   let skyboxEnabled, bgcolor, sceneMode;
@@ -108,25 +102,4 @@ const html = `
       e.currentTarget.textContent = "Skybox Disabled";
     }
   });
-
-  document.getElementById("add-layer").addEventListener("click", (e) => {
-    parent.postMessage({actionField: 'layer', action: 'addLayer'}, "*");
-  });
 </script>
-
-`;
-
-reearth.ui.show(html, {
-    height: 250,
-    width: 456
-});
-
-reearth.on("message", msg => {
-    if(msg.actionField && msg.actionField === 'layer'){
-        // if(msg.action === 'addLayer'){
-        //     reearth.layers.add();
-        // }
-    }else{
-        reearth.visualizer.overrideProperty(msg)
-    }
-});
