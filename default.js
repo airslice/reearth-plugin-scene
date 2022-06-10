@@ -15,7 +15,7 @@ const html = `
   }
   #wrapper {
     padding: 10px 20px;
-    background-color: rgba(35, 34, 38, 1);
+    background-color: rgba(35, 34, 38, 0.75);
     box-sizing: border-box;
     height: 250px;
   }
@@ -23,6 +23,10 @@ const html = `
     font-weight: bold;
     color: #fff;
     font-size: 20px;
+  }
+
+  .hidden {
+    display: none;
   }
 
   .extendedh body,
@@ -47,7 +51,7 @@ const html = `
 
   input,
   input:focus {
-    border: solid 1px #4A4A4A;
+    border: solid 1px #4a4a4a;
     outline: none;
     background: none;
     color: rgb(180, 180, 180);
@@ -61,20 +65,30 @@ const html = `
     border: none;
     background: rgba(0, 0, 0, 0.5);
     color: rgb(180, 180, 180);
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  button:hover {
+    color: #fff;
   }
 </style>
 <div id="wrapper">
-  <h1>Scene API</h1>
-  <p>
-    <input id="bg-color" placeholder="Background colour" />
-    <input id="scene-mode" placeholder="scene3d" />
-    <button id="skybox">Skybox</button>
-    <button id="remove">Remove</button>
-  </p>
-  <h1>Layer API</h1>
-  <p>
-    <button id="add-layer">Add Layer</button>
-  </p>
+  <div class="api-field hidden">
+    <h1>Scene API</h1>
+    <p>
+      <input id="bg-color" placeholder="Background colour" />
+      <input id="scene-mode" placeholder="scene3d" />
+      <button id="skybox">Skybox</button>
+      <button id="remove">Remove</button>
+    </p>
+  </div>
+
+  <div class="api-field">
+    <h1>Layer API</h1>
+    <p>
+      <button id="add-marker">Add Marker</button>
+    </p>
+  </div>
 </div>
 <script>
   let skyboxEnabled, bgcolor, sceneMode;
@@ -109,24 +123,39 @@ const html = `
     }
   });
 
-  document.getElementById("add-layer").addEventListener("click", (e) => {
-    parent.postMessage({actionField: 'layer', action: 'addLayer'}, "*");
+  document.getElementById("add-marker").addEventListener("click", (e) => {
+    parent.postMessage({ actionField: "layer", action: "addMarker" }, "*");
   });
 </script>
 
 `;
 
 reearth.ui.show(html, {
-    height: 250,
-    width: 456
+  height: 250,
+  width: 456
 });
 
 reearth.on("message", msg => {
-    if(msg.actionField && msg.actionField === 'layer'){
-        // if(msg.action === 'addLayer'){
-        //     reearth.layers.add();
-        // }
-    }else{
-        reearth.visualizer.overrideProperty(msg)
+  if (msg.actionField && msg.actionField === 'layer') {
+    if (msg.action === 'addMarker') {
+      reearth.layers.add({
+        pluginId: "reearth",
+        extensionId: "marker",
+        isVisible: true,
+        title: "Marker",
+        property: {
+          default: {
+            location: {
+              lat: 43 + Math.random() * 5,
+              lng: -102 + Math.random() * 5,
+            },
+          },
+        },
+        propertyId: "",
+        tags: [],
+      });
     }
+  } else {
+    reearth.visualizer.overrideProperty(msg)
+  }
 });
